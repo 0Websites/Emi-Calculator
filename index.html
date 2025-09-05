@@ -156,6 +156,22 @@
       font-weight: bold;
       color: #111;
     }
+
+    /* Responsive Design */
+@media (max-width: 900px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
+  #resultContainer {
+    grid-column: span 1 !important;
+  }
+}
+
+@media (max-width: 500px) {
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
   </style>
 </head>
 <body>
@@ -267,5 +283,6 @@
   </script>
 </body>
 </html>
+
 
 
