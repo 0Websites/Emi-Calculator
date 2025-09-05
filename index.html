@@ -31,34 +31,20 @@
   <link rel="icon" href="favicon.ico" type="image/x-icon" />
 
   <style>
-    body {
-      width: 100%;
+   body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #dfe9f3, #ffffff);
-      min-height: 100vh;
+      background: linear-gradient(135deg, #c5e4ff, #c3fcff);
+      width: 100%;
+      height: 100vh;
       margin: 0;
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 40px;
       position: relative;
-      overflow-Y: scroll;
+      overflow-y: scroll;
     }
 
-    /* Gradient abstract lines background */
-    body::before, body::after {
-      content: "";
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, #4facfe, #00f2fe);
-      border-radius: 50%;
-      filter: blur(120px);
-      opacity: 0.3;
-      z-index: 0;
-    }
-    body::before { top: -200px; left: -200px; }
-    body::after { bottom: -200px; right: -200px; }
 
     .dashboard {
       position: relative;
@@ -167,6 +153,9 @@
   }
   #resultContainer {
     grid-column: span 1 !important;
+  }
+  body{
+  height: 100%;
   }
 }
 
@@ -291,6 +280,7 @@
   </script>
 </body>
 </html>
+
 
 
 
