@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EMI Calculator Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Title & Description (Most Important for Google Ranking) -->
+  <title>Free Online EMI Calculator | Loan EMI Calculator Tool</title>
+  <meta name="description" content="Free EMI Calculator to calculate your monthly loan EMI, total interest, and total payment. Simple, accurate, and fast EMI calculation tool.">
+
+  <!-- Keywords (Not very important now but still useful) -->
+  <meta name="keywords" content="EMI Calculator, Loan Calculator, Interest Calculator, Home Loan EMI, Car Loan EMI">
+
+  <!-- Open Graph for social sharing -->
+  <meta property="og:title" content="Free Online EMI Calculator Tool">
+  <meta property="og:description" content="Calculate monthly EMI, interest and total loan payment instantly.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://your-github-username.github.io/emi-calculator/">
+  <meta property="og:image" content="https://your-github-username.github.io/emi-calculator/thumbnail.png">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Free Online EMI Calculator Tool">
+  <meta name="twitter:description" content="Calculate your monthly EMI, total interest, and total payment easily.">
+
+  <!-- Favicon -->
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #dfe9f3, #ffffff);
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Gradient abstract lines background */
+    body::before, body::after {
+      content: "";
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.3;
+      z-index: 0;
+    }
+    body::before { top: -200px; left: -200px; }
+    body::after { bottom: -200px; right: -200px; }
+
+    .dashboard {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-gap: 25px;
+      max-width: 1100px;
+      width: 100%;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(18px);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 22px;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: 500;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      outline: none;
+      margin-bottom: 15px;
+      font-size: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #43cea2, #185a9d);
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+
+    /* Chart card */
+    #chartContainer {
+      display: none;
+      text-align: center;
+    }
+    #emiChart {
+      max-width: 300px;
+      margin: auto;
+    }
+
+    /* Result summary */
+    #resultContainer {
+      display: none;
+    }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .summary-card {
+      background: rgba(255,255,255,0.85);
+      padding: 15px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+    .summary-card h3 {
+      margin: 0;
+      font-size: 16px;
+      color: #444;
+    }
+    .summary-card p {
+      margin: 8px 0 0;
+      font-size: 15px;
+      font-weight: bold;
+      color: #111;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    
+    <!-- Input Box -->
+    <div class="card">
+      <h2>💳 EMI Calculator</h2>
+      <label>💰 Loan Amount (₹)</label>
+      <input type="number" id="loanAmount" placeholder="Enter Loan Amount" />
+
+      <label>📅 Tenure (Years)</label>
+      <input type="number" id="tenure" placeholder="Enter Tenure in Years" />
+
+      <label>📈 Interest Rate (%)</label>
+      <input type="number" id="interestRate" placeholder="Enter Interest Rate" step="0.1" />
+
+      <button onclick="calculateEMI()">Calculate EMI</button>
+    </div>
+
+    <!-- Chart Box -->
+    <div class="card" id="chartContainer">
+      <h2>📊 Loan Breakdown</h2>
+      <canvas id="emiChart"></canvas>
+    </div>
+
+    <!-- Results Box -->
+    <div class="card" id="resultContainer" style="grid-column: span 2;">
+      <h2>📑 Summary</h2>
+      <div class="summary-grid" id="summary"></div>
+    </div>
+
+  </div>
+
+  <script>
+    function calculateEMI() {
+      let P = parseFloat(document.getElementById("loanAmount").value);
+      let N = parseFloat(document.getElementById("tenure").value) * 12;
+      let R = parseFloat(document.getElementById("interestRate").value) / 12 / 100;
+
+      if (isNaN(P) || isNaN(N) || isNaN(R)) {
+        alert("⚠️ Please fill all fields correctly!");
+        return;
+      }
+
+      let emi = (P * R * Math.pow(1 + R, N)) / (Math.pow(1 + R, N) - 1);
+      let totalPayment = emi * N;
+      let totalInterest = totalPayment - P;
+
+      // Show sections
+      document.getElementById("chartContainer").style.display = "block";
+      document.getElementById("resultContainer").style.display = "block";
+
+      // Chart render
+      const ctx = document.getElementById("emiChart").getContext("2d");
+      if (window.chartInstance) {
+        window.chartInstance.destroy();
+      }
+      window.chartInstance = new Chart(ctx, {
+        type: "pie",
+        data: {
+          labels: ["Principal", "Interest"],
+          datasets: [{
+            data: [P, totalInterest],
+            backgroundColor: ["#43cea2", "#ff6f61"]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          aspectRatio: 1,
+          plugins: {
+            legend: { position: "bottom" }
+          }
+        }
+      });
+
+      // Summary cards
+      document.getElementById("summary").innerHTML = `
+        <div class="summary-card">
+          <h3>Monthly EMI</h3>
+          <p>₹${emi.toFixed(2)}</p>
+        </div>
+        <div class="summary-card">
+          <h3>Total Interest</h3>
+          <p>₹${totalInterest.toFixed(2)}</p>
+        </div>
+        <div class="summary-card">
+          <h3>Total Payment</h3>
+          <p>₹${totalPayment.toFixed(2)}</p>
+        </div>
+      `;
+    }
+  </script>
+    <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "EMI Calculator",
+    "url": "https://your-github-username.github.io/emi-calculator/",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "All",
+    "description": "Free EMI Calculator to calculate your monthly loan EMI, total interest, and total payment.",
+    "creator": {
+      "@type": "Organization",
+      "name": "Your Brand Name"
+    }
+  }
+  </script>
+</body>
+</html>
